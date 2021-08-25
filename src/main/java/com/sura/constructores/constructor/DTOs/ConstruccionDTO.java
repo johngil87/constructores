@@ -10,7 +10,7 @@ import lombok.Setter;
 public class ConstruccionDTO {
 
     private String idConstruccion;
-    private String tipoConstruccio;
+    private String tipoConstruccion;
     private Double cantidadCemento;
     private Double cantidadGrava;
     private Double cantidadArena;

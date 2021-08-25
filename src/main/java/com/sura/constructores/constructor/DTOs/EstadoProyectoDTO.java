@@ -10,8 +10,6 @@ import lombok.Setter;
 public class EstadoProyectoDTO {
 
     private String fechaFinal;
+    private String nombreProyecto;
     private Integer obrasTotales;
-    private Integer obrasTerminadas;
-    private Integer obrasPendientes;
-    private Integer obrasProgreso;
 }

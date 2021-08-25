@@ -12,8 +12,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class ProjectStatusEntity {
 
     private String finishDate;
+    private String nameProject;
     private Integer totalWorks;
-    private Integer finishedWorks;
-    private Integer pendingWorks;
-    private Integer progressWorks;
 }

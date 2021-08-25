@@ -9,7 +9,8 @@ public class MaterialMap {
         return  MaterialDTO.builder()
                 .idMaterial(entity.getId())
                 .tipoMaterial(entity.getType())
-                .CantidadMaterial(entity.getAmount()).build();
+                .CantidadMaterial(entity.getAmount())
+                .build();
     }
 
     public MaterialEntity dtoToEntity(MaterialDTO dto){
