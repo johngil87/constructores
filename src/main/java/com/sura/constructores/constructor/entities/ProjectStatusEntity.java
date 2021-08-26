@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
+
 @Document(collection = "project")
 @Builder
 @Setter
@@ -14,7 +16,7 @@ public class ProjectStatusEntity {
 
     @Id
     private String id;
-    private String finishDate;
+    private Date finishDate;
     private String nameProject;
     private Integer totalWorks;
 }

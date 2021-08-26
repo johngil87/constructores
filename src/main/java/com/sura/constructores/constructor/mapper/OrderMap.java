@@ -3,7 +3,7 @@ package com.sura.constructores.constructor.mapper;
 import com.sura.constructores.constructor.DTOs.OrdenConstruccionDTO;
 import com.sura.constructores.constructor.entities.BuildOrderEntity;
 
-public class OrdenMap {
+public class OrderMap {
 
     public OrdenConstruccionDTO entityToDto(BuildOrderEntity entity){
         return OrdenConstruccionDTO.builder()
