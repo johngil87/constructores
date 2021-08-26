@@ -1,12 +1,15 @@
 package com.sura.constructores.constructor.helpers;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Calendar;
 import java.util.Date;
 
+@Component
 public class CreateDate {
 
 
-    public Date getActualDate() {
+    private Date getActualDate() {
         var date = Calendar.getInstance();
         return date.getTime();
     }
@@ -19,6 +22,9 @@ public class CreateDate {
     }
 
     public Date setStartDate(Date date) {
+        if(date == null){
+            return getActualDate();
+        }
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.add(Calendar.DAY_OF_YEAR, 1);

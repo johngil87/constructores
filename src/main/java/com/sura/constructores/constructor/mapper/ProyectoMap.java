@@ -9,7 +9,6 @@ public class ProyectoMap {
         return EstadoProyectoDTO.builder()
                 .fechaFinal(entity.getFinishDate())
                 .nombreProyecto(entity.getNameProject())
-                .obrasTotales(entity.getTotalWorks())
                 .build();
     }
 
@@ -17,7 +16,6 @@ public class ProyectoMap {
         return ProjectStatusEntity.builder()
                 .finishDate(dto.getFechaFinal())
                 .nameProject(dto.getNombreProyecto())
-                .totalWorks(dto.getObrasTotales())
                 .build();
     }
 }

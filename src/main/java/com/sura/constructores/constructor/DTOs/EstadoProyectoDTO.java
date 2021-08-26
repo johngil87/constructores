@@ -13,5 +13,4 @@ public class EstadoProyectoDTO {
 
     private Date fechaFinal;
     private String nombreProyecto;
-    private Integer obrasTotales;
 }

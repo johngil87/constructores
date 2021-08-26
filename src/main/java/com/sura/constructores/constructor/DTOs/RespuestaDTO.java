@@ -10,8 +10,7 @@ public class RespuestaDTO {
     private String fecha;
     private String respuesta;
 
-    public RespuestaDTO(String nombreProyecto, String fecha, String respuesta) {
-        this.nombreProyecto = nombreProyecto;
+    public RespuestaDTO( String fecha, String respuesta) {
         this.fecha = fecha;
         this.respuesta = respuesta;
     }

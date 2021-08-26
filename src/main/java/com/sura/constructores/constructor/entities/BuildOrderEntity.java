@@ -8,10 +8,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
-@Document(collection = "order")
+
 @Builder
 @Setter
 @Getter
+@Document(collection = "order")
 public class BuildOrderEntity {
 
     @Id
@@ -20,6 +21,6 @@ public class BuildOrderEntity {
     private String status;
     private Date startDate;
     private Date finishDate;
-    private Double xCoordinate;
-    private Double yCoordinate;
+    private Double coordinateX;
+    private Double coordinateY;
 }

@@ -8,15 +8,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
-@Document(collection = "project")
+
 @Builder
 @Setter
 @Getter
+@Document(collection = "project")
 public class ProjectStatusEntity {
 
     @Id
     private String id;
     private Date finishDate;
     private String nameProject;
-    private Integer totalWorks;
 }

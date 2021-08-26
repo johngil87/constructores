@@ -2,7 +2,9 @@ package com.sura.constructores.constructor.mapper;
 
 import com.sura.constructores.constructor.DTOs.OrdenConstruccionDTO;
 import com.sura.constructores.constructor.entities.BuildOrderEntity;
+import org.springframework.stereotype.Component;
 
+@Component
 public class OrderMap {
 
     public OrdenConstruccionDTO entityToDto(BuildOrderEntity entity){
@@ -12,8 +14,8 @@ public class OrderMap {
                 .estado(entity.getStatus())
                 .fechaInicio(entity.getStartDate())
                 .fechaFinalizacion(entity.getFinishDate())
-                .coordenadasX(entity.getXCoordinate())
-                .coordenadasY(entity.getYCoordinate())
+                .coordenadasX(entity.getCoordinateX())
+                .coordenadasY(entity.getCoordinateY())
                 .build();
     }
 
@@ -24,8 +26,8 @@ public class OrderMap {
                 .status(dto.getEstado())
                 .startDate(dto.getFechaInicio())
                 .finishDate(dto.getFechaFinalizacion())
-                .xCoordinate(dto.getCoordenadasX())
-                .yCoordinate(dto.getCoordenadasY())
+                .coordinateX(dto.getCoordenadasX())
+                .coordinateY(dto.getCoordenadasY())
                 .build();
     }
 }
