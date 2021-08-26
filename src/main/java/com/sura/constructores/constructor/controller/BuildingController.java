@@ -25,4 +25,9 @@ public class BuildingController {
         return new ResponseEntity<>(serviceBuilding.validateOrder(dto), HttpStatus.OK);
     }
 
+    @GetMapping("/obtenerfecha")
+    public ResponseEntity<RespuestaDTO> getDate(){
+        return new ResponseEntity<>(serviceBuilding.getFinishDate(), HttpStatus.OK);
+    }
+
 }

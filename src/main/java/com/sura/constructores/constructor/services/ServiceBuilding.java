@@ -15,6 +15,8 @@ import com.sura.constructores.constructor.repositories.ProjectStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+
 @Service
 public class ServiceBuilding implements ServiceBuildOrder {
 
@@ -42,6 +44,7 @@ public class ServiceBuilding implements ServiceBuildOrder {
         return saveOrder(entity, project, dto);
     }
 
+    @Override
     public RespuestaDTO validateOrder(OrdenConstruccionDTO dto) {
         if(!validateCoordinates(dto.getCoordenadasX(), dto.getCoordenadasY()) && validaMaterial(dto)){
             return RespuestaDTO.builder()
@@ -52,6 +55,16 @@ public class ServiceBuilding implements ServiceBuildOrder {
                 .respuesta("La orden no puede ser creada")
                 .build();
     }
+
+    public RespuestaDTO getFinishDate(){
+        var entity = projectStatusRepository.findAll().get(0);
+        DateFormat formatDate = DateFormat.getDateInstance(DateFormat.LONG);
+        return RespuestaDTO.builder()
+                .fecha("fecha de finalizacion del proyecto "+formatDate.format(entity.getFinishDate()))
+                .nombreProyecto(entity.getNameProject())
+                .build();
+    }
+
 
     private Boolean validateCoordinates(Double x, Double y) {
         var build = buildOrderRepository.findByCoordinateXAndCoordinateY(x, y);
