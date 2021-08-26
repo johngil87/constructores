@@ -15,9 +15,7 @@ public class CreateDate {
     }
 
     public Date setFinishDate(Date date, Integer days) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.add(Calendar.DAY_OF_YEAR, days);
+        Calendar calendar = addDays(date, days);
         return calendar.getTime();
     }
 
@@ -25,10 +23,15 @@ public class CreateDate {
         if(date == null){
             return getActualDate();
         }
+        Calendar calendar = addDays(date, 1);
+        return calendar.getTime();
+    }
+
+    private Calendar addDays(Date date, Integer days) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-        return calendar.getTime();
+        calendar.add(Calendar.DAY_OF_YEAR, days);
+        return calendar;
     }
 
 }
