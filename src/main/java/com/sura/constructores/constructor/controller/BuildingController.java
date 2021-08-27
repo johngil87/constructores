@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+
 @RestController
 @RequestMapping("/api")
 public class BuildingController {
@@ -18,7 +20,7 @@ public class BuildingController {
     private ServiceBuilding serviceBuilding;
 
     @PostMapping("/crearorden")
-    public ResponseEntity<RespuestaDTO> createOrder(@RequestBody OrdenConstruccionDTO dto){
+    public ResponseEntity<RespuestaDTO> createOrder(@RequestBody OrdenConstruccionDTO dto) throws ParseException {
         return new ResponseEntity<>(serviceBuilding.createOrder(dto), HttpStatus.OK);
     }
 

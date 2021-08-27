@@ -15,9 +15,13 @@ import com.sura.constructores.constructor.repositories.BuildingRepository;
 import com.sura.constructores.constructor.repositories.MaterialRepository;
 import com.sura.constructores.constructor.repositories.ProjectStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Service
 public class ServiceBuilding implements ServiceBuildOrder {
@@ -36,13 +40,14 @@ public class ServiceBuilding implements ServiceBuildOrder {
     private CreateDate createDate;
 
     @Override
-    public RespuestaDTO createOrder(OrdenConstruccionDTO dto) {
+    public RespuestaDTO createOrder(OrdenConstruccionDTO dto) throws ParseException {
+        var simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         var entity = orderMapper.dtoToEntity(dto);
         Integer days = buildingRepository.findByTypeBuilding(dto.getTipo()).getDays();
         var project = projectStatusRepository.findAll().get(0);
-        entity.setStartDate(createDate.setStartDate(project.getFinishDate()));
-        entity.setFinishDate(createDate.setFinishDate(entity.getStartDate(), days));
-        project.setFinishDate(entity.getFinishDate());
+        entity.setStartDate(simpleDateFormat.format(createDate.setStartDate(project.getFinishDate())));
+        entity.setFinishDate(simpleDateFormat.format(createDate.setFinishDate(simpleDateFormat.parse(entity.getStartDate()), days)));
+        project.setFinishDate(simpleDateFormat.parse(entity.getFinishDate()));
         return saveOrder(entity, project, dto);
     }
 
@@ -88,7 +93,8 @@ public class ServiceBuilding implements ServiceBuildOrder {
     @Override
     public RespuestaDTO loadResources(MaterialDTO dto){
         var material = getMaterial(dto.getTipoMaterial());
-        material.setAmount(material.getAmount()+dto.getCantidadMaterial());
+        var amount = material.getAmount()+dto.getCantidadMaterial();
+        material.setAmount(amount);
         materialRepository.save(material);
         return RespuestaDTO.builder()
                 .respuesta("el material fue guardado con exito")
@@ -108,11 +114,11 @@ public class ServiceBuilding implements ServiceBuildOrder {
             projectStatusRepository.save(project);
             discountResource(entity.getType());
             return RespuestaDTO.builder()
-                    .respuesta("La orden creada satisfactoriamente")
+                    .respuesta("La orden fue creada satisfactoriamente")
                     .build();
         }
         return RespuestaDTO.builder()
-                .respuesta("La orden no pudo ser creada")
+                .respuesta("La orden no pudo ser creada verifica cantidad de materiales o coordenadas")
                 .build();
     }
 
@@ -149,6 +155,19 @@ public class ServiceBuilding implements ServiceBuildOrder {
 
     private MaterialEntity getMaterial(String type){
         return materialRepository.findByType(type);
+    }
+
+    @Scheduled(cron="0 0 7 * * *")
+    private void verifyStartPendingConstruction() throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        var date = simpleDateFormat.format( new Date());
+        Date endDate = simpleDateFormat.parse(date);
+        System.out.println("Hola mundo");
+    }
+
+    @Scheduled(cron="0 0 20 * * *")
+    private void verifyFinishedConstruction(){
+        System.out.println("Hola mundo");
     }
 
 }

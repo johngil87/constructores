@@ -19,8 +19,8 @@ public class BuildOrderEntity {
     private String id;
     private String type;
     private String status;
-    private Date startDate;
-    private Date finishDate;
+    private String startDate;
+    private String finishDate;
     private Double coordinateX;
     private Double coordinateY;
 }

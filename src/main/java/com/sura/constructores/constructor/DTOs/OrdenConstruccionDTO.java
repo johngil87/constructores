@@ -14,8 +14,8 @@ public class OrdenConstruccionDTO {
     private String idOrden;
     private String tipo;
     private String estado;
-    private Date fechaInicio;
-    private Date fechaFinalizacion;
+    private String fechaInicio;
+    private String fechaFinalizacion;
     private Double coordenadasX;
     private Double coordenadasY;
 }
