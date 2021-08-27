@@ -1,5 +1,6 @@
 package com.sura.constructores.constructor.controller;
 
+import com.sura.constructores.constructor.DTOs.MaterialDTO;
 import com.sura.constructores.constructor.DTOs.OrdenConstruccionDTO;
 import com.sura.constructores.constructor.DTOs.ReportDTO;
 import com.sura.constructores.constructor.DTOs.RespuestaDTO;
@@ -34,6 +35,11 @@ public class BuildingController {
     @GetMapping("/obtenerreporte")
     public ResponseEntity<ReportDTO> getReport(){
         return new ResponseEntity<>(serviceBuilding.getReport(), HttpStatus.OK);
+    }
+
+    @PutMapping("/agregarmaterial")
+    public ResponseEntity<RespuestaDTO> recourse(@RequestBody MaterialDTO dto){
+        return new ResponseEntity<>(serviceBuilding.loadResources(dto), HttpStatus.OK);
     }
 
 }

@@ -11,6 +11,6 @@ public class MaterialDTO {
 
     private String idMaterial;
     private String tipoMaterial;
-    private Double CantidadMaterial;
+    private Double cantidadMaterial;
 
 }

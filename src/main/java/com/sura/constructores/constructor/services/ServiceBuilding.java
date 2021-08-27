@@ -1,5 +1,6 @@
 package com.sura.constructores.constructor.services;
 
+import com.sura.constructores.constructor.DTOs.MaterialDTO;
 import com.sura.constructores.constructor.DTOs.OrdenConstruccionDTO;
 import com.sura.constructores.constructor.DTOs.ReportDTO;
 import com.sura.constructores.constructor.DTOs.RespuestaDTO;
@@ -57,6 +58,7 @@ public class ServiceBuilding implements ServiceBuildOrder {
                 .build();
     }
 
+    @Override
     public RespuestaDTO getFinishDate() {
         var entity = projectStatusRepository.findAll().get(0);
         DateFormat formatDate = DateFormat.getDateInstance(DateFormat.LONG);
@@ -66,6 +68,7 @@ public class ServiceBuilding implements ServiceBuildOrder {
                 .build();
     }
 
+    @Override
     public ReportDTO getReport() {
         var finish = buildOrderRepository.findAllByStatus("terminado");
         var progress = buildOrderRepository.findAllByStatus("progreso");
@@ -80,6 +83,16 @@ public class ServiceBuilding implements ServiceBuildOrder {
                 "Cantidad de obras terminadas: "+finish.size(),
                 "cantidad de obras en progreso: "+progress.size()
         );
+    }
+
+    @Override
+    public RespuestaDTO loadResources(MaterialDTO dto){
+        var material = getMaterial(dto.getTipoMaterial());
+        material.setAmount(material.getAmount()+dto.getCantidadMaterial());
+        materialRepository.save(material);
+        return RespuestaDTO.builder()
+                .respuesta("el material fue guardado con exito")
+                .build();
     }
 
     private Boolean validateCoordinates(Double x, Double y) {
@@ -105,11 +118,11 @@ public class ServiceBuilding implements ServiceBuildOrder {
 
     private Boolean validaMaterial(OrdenConstruccionDTO dto) {
         var build = buildingRepository.findByTypeBuilding(dto.getTipo());
-        return materialResource(build.getAmountCement(), materialRepository.findByType("cement").getAmount()) &&
-                materialResource(build.getAmountGravel(), materialRepository.findByType("gravel").getAmount()) &&
-                materialResource(build.getAmountSand(), materialRepository.findByType("sand").getAmount()) &&
-                materialResource(build.getAmountWood(), materialRepository.findByType("wood").getAmount()) &&
-                materialResource(build.getAmountAdobe(), materialRepository.findByType("adobe").getAmount());
+        return materialResource(build.getAmountCement(), getMaterial("cement").getAmount()) &&
+                materialResource(build.getAmountGravel(), getMaterial("gravel").getAmount()) &&
+                materialResource(build.getAmountSand(), getMaterial("sand").getAmount()) &&
+                materialResource(build.getAmountWood(), getMaterial("wood").getAmount()) &&
+                materialResource(build.getAmountAdobe(), getMaterial("adobe").getAmount());
     }
 
     private Boolean materialResource(Double required, Double resource) {
@@ -129,9 +142,13 @@ public class ServiceBuilding implements ServiceBuildOrder {
     }
 
     private MaterialEntity resource(String material, Double amount) {
-        var resource = materialRepository.findByType(material);
+        var resource = getMaterial(material);
         resource.setAmount(resource.getAmount() - amount);
         return materialRepository.save(resource);
+    }
+
+    private MaterialEntity getMaterial(String type){
+        return materialRepository.findByType(type);
     }
 
 }
