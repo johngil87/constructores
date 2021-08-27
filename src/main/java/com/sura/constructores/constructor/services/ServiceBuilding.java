@@ -1,6 +1,7 @@
 package com.sura.constructores.constructor.services;
 
 import com.sura.constructores.constructor.DTOs.OrdenConstruccionDTO;
+import com.sura.constructores.constructor.DTOs.ReportDTO;
 import com.sura.constructores.constructor.DTOs.RespuestaDTO;
 import com.sura.constructores.constructor.entities.BuildOrderEntity;
 import com.sura.constructores.constructor.entities.MaterialEntity;
@@ -46,7 +47,7 @@ public class ServiceBuilding implements ServiceBuildOrder {
 
     @Override
     public RespuestaDTO validateOrder(OrdenConstruccionDTO dto) {
-        if(!validateCoordinates(dto.getCoordenadasX(), dto.getCoordenadasY()) && validaMaterial(dto)){
+        if (!validateCoordinates(dto.getCoordenadasX(), dto.getCoordenadasY()) && validaMaterial(dto)) {
             return RespuestaDTO.builder()
                     .respuesta("La orden puede ser creada de manera satisfactoria")
                     .build();
@@ -56,15 +57,30 @@ public class ServiceBuilding implements ServiceBuildOrder {
                 .build();
     }
 
-    public RespuestaDTO getFinishDate(){
+    public RespuestaDTO getFinishDate() {
         var entity = projectStatusRepository.findAll().get(0);
         DateFormat formatDate = DateFormat.getDateInstance(DateFormat.LONG);
         return RespuestaDTO.builder()
-                .fecha("fecha de finalizacion del proyecto "+formatDate.format(entity.getFinishDate()))
+                .fecha("fecha de finalizacion del proyecto " + formatDate.format(entity.getFinishDate()))
                 .nombreProyecto(entity.getNameProject())
                 .build();
     }
 
+    public ReportDTO getReport() {
+        var finish = buildOrderRepository.findAllByStatus("terminado");
+        var progress = buildOrderRepository.findAllByStatus("progreso");
+        var pending = buildOrderRepository.findAllByStatus("pendiente");
+        var entity = projectStatusRepository.findAll().get(0);
+        DateFormat formatDate = DateFormat.getDateInstance(DateFormat.LONG);
+        return new ReportDTO(
+                entity.getNameProject(),
+                "",
+                "",
+                "Cantidad de obras pendientes:"+pending.size(),
+                "Cantidad de obras terminadas: "+finish.size(),
+                "cantidad de obras en progreso: "+progress.size()
+        );
+    }
 
     private Boolean validateCoordinates(Double x, Double y) {
         var build = buildOrderRepository.findByCoordinateXAndCoordinateY(x, y);
@@ -92,18 +108,18 @@ public class ServiceBuilding implements ServiceBuildOrder {
         return materialResource(build.getAmountCement(), materialRepository.findByType("cement").getAmount()) &&
                 materialResource(build.getAmountGravel(), materialRepository.findByType("gravel").getAmount()) &&
                 materialResource(build.getAmountSand(), materialRepository.findByType("sand").getAmount()) &&
-                materialResource(build.getAmountWood(), materialRepository.findByType("wood").getAmount())&&
+                materialResource(build.getAmountWood(), materialRepository.findByType("wood").getAmount()) &&
                 materialResource(build.getAmountAdobe(), materialRepository.findByType("adobe").getAmount());
     }
 
-    private Boolean materialResource(Double required, Double resource){
-        if(required > resource){
+    private Boolean materialResource(Double required, Double resource) {
+        if (required > resource) {
             return false;
         }
         return true;
     }
 
-    private void discountResource(String type){
+    private void discountResource(String type) {
         var build = buildingRepository.findByTypeBuilding(type);
         resource("cement", build.getAmountCement());
         resource("adobe", build.getAmountAdobe());
@@ -112,10 +128,10 @@ public class ServiceBuilding implements ServiceBuildOrder {
         resource("wood", build.getAmountWood());
     }
 
-    private MaterialEntity resource(String material , Double amount){
-        var resource= materialRepository.findByType(material);
-        resource.setAmount(resource.getAmount()- amount);
-        return  materialRepository.save(resource);
+    private MaterialEntity resource(String material, Double amount) {
+        var resource = materialRepository.findByType(material);
+        resource.setAmount(resource.getAmount() - amount);
+        return materialRepository.save(resource);
     }
 
 }

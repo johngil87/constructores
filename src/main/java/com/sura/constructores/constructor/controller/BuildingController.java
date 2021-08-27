@@ -1,6 +1,7 @@
 package com.sura.constructores.constructor.controller;
 
 import com.sura.constructores.constructor.DTOs.OrdenConstruccionDTO;
+import com.sura.constructores.constructor.DTOs.ReportDTO;
 import com.sura.constructores.constructor.DTOs.RespuestaDTO;
 import com.sura.constructores.constructor.services.ServiceBuilding;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,11 @@ public class BuildingController {
     @GetMapping("/obtenerfecha")
     public ResponseEntity<RespuestaDTO> getDate(){
         return new ResponseEntity<>(serviceBuilding.getFinishDate(), HttpStatus.OK);
+    }
+
+    @GetMapping("/obtenerreporte")
+    public ResponseEntity<ReportDTO> getReport(){
+        return new ResponseEntity<>(serviceBuilding.getReport(), HttpStatus.OK);
     }
 
 }
