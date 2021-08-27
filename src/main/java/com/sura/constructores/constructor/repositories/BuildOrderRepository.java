@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface BuildOrderRepository extends MongoRepository<BuildOrderEntity, String> {
     Optional <BuildOrderEntity> findByCoordinateXAndCoordinateY(Double coordinateX, Double coordinateY);
     List<BuildOrderEntity> findAllByStatus(String status);
+    BuildOrderEntity findByStartDateStartsWith(String date);
+    BuildOrderEntity findByFinishDateStartsWith(String date);
 }

@@ -161,13 +161,22 @@ public class ServiceBuilding implements ServiceBuildOrder {
     private void verifyStartPendingConstruction() throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         var date = simpleDateFormat.format( new Date());
-        Date endDate = simpleDateFormat.parse(date);
-        System.out.println("Hola mundo");
+        var order = buildOrderRepository.findByStartDateStartsWith(date);
+        if(order != null && order.getStatus().equals("pendiente")){
+            order.setStatus("en progreso");
+            buildOrderRepository.save(order);
+        }
     }
 
     @Scheduled(cron="0 0 20 * * *")
     private void verifyFinishedConstruction(){
-        System.out.println("Hola mundo");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        var date = simpleDateFormat.format( new Date());
+        var order = buildOrderRepository.findByFinishDateStartsWith(date);
+        if(order != null && order.getStatus().equals("en progreso")){
+            order.setStatus("terminado");
+            buildOrderRepository.save(order);
+        }
     }
 
 }
