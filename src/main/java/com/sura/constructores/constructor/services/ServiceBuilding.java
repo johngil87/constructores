@@ -1,9 +1,6 @@
 package com.sura.constructores.constructor.services;
 
-import com.sura.constructores.constructor.DTOs.MaterialDTO;
-import com.sura.constructores.constructor.DTOs.OrdenConstruccionDTO;
-import com.sura.constructores.constructor.DTOs.ReportDTO;
-import com.sura.constructores.constructor.DTOs.RespuestaDTO;
+import com.sura.constructores.constructor.DTOs.*;
 import com.sura.constructores.constructor.entities.BuildOrderEntity;
 import com.sura.constructores.constructor.entities.MaterialEntity;
 import com.sura.constructores.constructor.entities.ProjectStatusEntity;
@@ -18,10 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class ServiceBuilding implements ServiceBuildOrder {
@@ -75,31 +75,51 @@ public class ServiceBuilding implements ServiceBuildOrder {
 
     @Override
     public ReportDTO getReport() {
-        var finish = buildOrderRepository.findAllByStatus("terminado");
-        var progress = buildOrderRepository.findAllByStatus("progreso");
-        var pending = buildOrderRepository.findAllByStatus("pendiente");
+        var finish = constructionReport(buildOrderRepository.findAllByStatus("terminado"));
+        var progress = constructionReport(buildOrderRepository.findAllByStatus("progreso"));
+        var pending = constructionReport(buildOrderRepository.findAllByStatus("pendiente"));
         var entity = projectStatusRepository.findAll().get(0);
         DateFormat formatDate = DateFormat.getDateInstance(DateFormat.LONG);
         return new ReportDTO(
                 entity.getNameProject(),
-                "",
-                "",
-                "Cantidad de obras pendientes:"+pending.size(),
-                "Cantidad de obras terminadas: "+finish.size(),
-                "cantidad de obras en progreso: "+progress.size()
+                entity.getFinishDate().toString(),
+                "reporte de obra",
+                "Obras pendientes:" + " casas " + pending.getCasas() + " lagos " + pending.getLagos() + " canchas de futbol " + pending.getCanchas() + " edificios " + pending.getEdificios() + " gimnasios " + pending.getGimnasios(),
+                "Obras terminadas: " + " casas " + finish.getCasas() + " lagos " + finish.getLagos() + " canchas de futbol " + finish.getCanchas() + " edificios " + finish.getEdificios() + " gimnasios " + finish.getGimnasios() ,
+                "Obras en progreso: " + " casas " + progress.getCasas() + " lagos " + progress.getLagos() + " canchas de futbol " + progress.getCanchas() + " edificios " + progress.getEdificios() + " gimnasios " + progress.getGimnasios()
         );
     }
 
     @Override
-    public RespuestaDTO loadResources(MaterialDTO dto){
+    public RespuestaDTO loadResources(MaterialDTO dto) {
         var material = getMaterial(dto.getTipoMaterial());
-        var amount = material.getAmount()+dto.getCantidadMaterial();
+        var amount = material.getAmount() + dto.getCantidadMaterial();
         material.setAmount(amount);
         materialRepository.save(material);
         return RespuestaDTO.builder()
                 .respuesta("el material fue guardado con exito")
                 .build();
     }
+
+    private ConstructionReportDTO constructionReport(List<BuildOrderEntity> list) {
+        var casa = countConstructions(list, "casa");
+        var lago = countConstructions(list, "lago");
+        var cancha = countConstructions(list, "cancha de futbol");
+        var edificio = countConstructions(list, "edificio");
+        var gym = countConstructions(list, "gimnasio");
+        return ConstructionReportDTO.builder()
+                .casas((int) casa)
+                .lagos((int) lago)
+                .canchas((int) cancha)
+                .edificios((int) edificio)
+                .gimnasios((int) gym)
+                .build();
+    }
+
+    private long countConstructions(List<BuildOrderEntity> list, String build) {
+        return list.stream().filter(it -> it.getType().equals(build)).count();
+    }
+
 
     private Boolean validateCoordinates(Double x, Double y) {
         var build = buildOrderRepository.findByCoordinateXAndCoordinateY(x, y);
@@ -153,27 +173,27 @@ public class ServiceBuilding implements ServiceBuildOrder {
         return materialRepository.save(resource);
     }
 
-    private MaterialEntity getMaterial(String type){
+    private MaterialEntity getMaterial(String type) {
         return materialRepository.findByType(type);
     }
 
-    @Scheduled(cron="0 0 7 * * *")
+    @Scheduled(cron = "0 0 7 * * *")
     private void verifyStartPendingConstruction() throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        var date = simpleDateFormat.format( new Date());
+        var date = simpleDateFormat.format(new Date());
         var order = buildOrderRepository.findByStartDateStartsWith(date);
-        if(order != null && order.getStatus().equals("pendiente")){
+        if (order != null && order.getStatus().equals("pendiente")) {
             order.setStatus("en progreso");
             buildOrderRepository.save(order);
         }
     }
 
-    @Scheduled(cron="0 0 20 * * *")
-    private void verifyFinishedConstruction(){
+    @Scheduled(cron = "0 0 20 * * *")
+    private void verifyFinishedConstruction() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        var date = simpleDateFormat.format( new Date());
+        var date = simpleDateFormat.format(new Date());
         var order = buildOrderRepository.findByFinishDateStartsWith(date);
-        if(order != null && order.getStatus().equals("en progreso")){
+        if (order != null && order.getStatus().equals("en progreso")) {
             order.setStatus("terminado");
             buildOrderRepository.save(order);
         }
